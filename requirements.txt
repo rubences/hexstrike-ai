@@ -13,6 +13,10 @@ flask>=2.3.0,<4.0.0             # Web framework for API server (flask import)
 requests>=2.31.0,<3.0.0         # HTTP library (requests import)
 psutil>=5.9.0,<6.0.0            # System utilities (psutil import)
 fastmcp>=0.2.0,<1.0.0           # MCP framework (from mcp.server.fastmcp import FastMCP)
+chromadb>=0.4.0                 # Vector database for RAG
+langchain>=0.1.0                # Framework for AI agents
+langchain-community>=0.0.10     # Community tools for LangChain
+ollama>=0.1.0                   # Ollama Python client
 
 # ============================================================================
 # WEB SCRAPING & AUTOMATION (ACTUALLY USED)

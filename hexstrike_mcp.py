@@ -22,6 +22,13 @@ import os
 import argparse
 import logging
 from typing import Dict, Any, Optional
+
+# Add parent directory to path for rag_engine
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+try:
+    from rag_engine import RAGEngine
+except ImportError:
+    RAGEngine = None
 import requests
 import time
 from datetime import datetime
@@ -275,6 +282,37 @@ def setup_mcp_server(hexstrike_client: HexStrikeClient) -> FastMCP:
         Configured FastMCP instance
     """
     mcp = FastMCP("hexstrike-ai-mcp")
+
+    # Initialize RAG Engine
+    rag_engine = RAGEngine() if RAGEngine else None
+
+    # ============================================================================
+    # KNOWLEDGE & INTELLIGENCE TOOLS (RAG)
+    # ============================================================================
+
+    @mcp.tool()
+    def query_security_knowledge(query: str, n_results: int = 3) -> Dict[str, Any]:
+        """
+        Query the security knowledge base (RAG) for relevant context, vulnerabilities, and best practices.
+        
+        Args:
+            query: The security question or topic to search for.
+            n_results: Number of relevant snippets to return.
+            
+        Returns:
+            List of relevant knowledge base snippets.
+        """
+        if not rag_engine:
+            return {"success": False, "error": "RAG Engine not initialized"}
+        
+        logger.info(f"{HexStrikeColors.ELECTRIC_PURPLE}🧠 Querying Knowledge Base: {query}{HexStrikeColors.RESET}")
+        try:
+            results = rag_engine.query(query, n_results)
+            return {"success": True, "results": results}
+        except Exception as e:
+            logger.error(f"❌ RAG Query failed: {str(e)}")
+            return {"success": False, "error": str(e)}
+
 
     # ============================================================================
     # CORE NETWORK SCANNING TOOLS
